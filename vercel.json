@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://relay.onrender.com/:path*" },
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}
