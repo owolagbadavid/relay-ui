@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://api.relay.tobee.dev/:path*" },
+    { "source": "/api/:path*", "destination": "https://rl.tobee.dev/:path*" },
     { "source": "/(.*)", "destination": "/" }
   ]
 }
