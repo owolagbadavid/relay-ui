@@ -52,7 +52,6 @@ export default function Dashboard() {
     setLoadingUrls(true);
     try {
       const data = await apiFetch<Page<ShortenedUrl>>("api/short-url?size=50");
-      console.log(data);
       setUrls(data.items ?? []);
     } catch {
       // todo
@@ -102,7 +101,6 @@ export default function Dashboard() {
         apiFetch<Page<ClickRecord>>(`api/short-url/${url.shortUrl}/analytics?size=50`),
         apiFetch<AnalyticsSummary>(`api/short-url/${url.shortUrl}/analytics/summary`),
       ]);
-      console.log(summaryData);
       setClicks(clickData.items ?? []);
       setSummary(summaryData ?? null);
     } catch {
@@ -122,7 +120,7 @@ export default function Dashboard() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <p className="text-gray-400">Loading...</p>
       </div>
     );
@@ -133,29 +131,23 @@ export default function Dashboard() {
   const maxClicks = summary ? Math.max(...(summary.clicksByDay?.map((d) => d.count) ?? [0]), 1) : 1;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
-      {/* Nav */}
-      <nav className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-        <span className="text-xl font-bold text-blue-600 dark:text-blue-400 tracking-tight">
-          Relay
-        </span>
+    <div className="min-h-screen flex flex-col bg-white text-black">
+      <nav className="flex items-center justify-between px-8 py-5 border-b border-gray-200">
+        <span className="text-xl font-semibold tracking-tight">Relay</span>
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-500">{profile.email}</span>
           <button
             onClick={logout}
-            className="text-sm text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
+            className="text-sm text-gray-500 hover:text-black transition"
           >
             Logout
           </button>
         </div>
       </nav>
 
-      <div className="flex-1 max-w-6xl mx-auto w-full px-6 py-6 space-y-6">
-        {/* Create URL */}
-        <section className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-5 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Shorten a URL
-          </h2>
+      <div className="flex-1 max-w-6xl mx-auto w-full px-8 py-8 space-y-6">
+        <section className="border border-gray-200 rounded-2xl p-6">
+          <h2 className="text-lg font-semibold mb-4">Shorten a URL</h2>
           <form onSubmit={handleCreate} className="flex flex-col sm:flex-row gap-3">
             <input
               type="url"
@@ -163,7 +155,7 @@ export default function Dashboard() {
               placeholder="https://example.com/your-long-url"
               value={longUrl}
               onChange={(e) => setLongUrl(e.target.value)}
-              className="flex-2 min-w-0 px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-2 min-w-0 px-4 py-2.5 text-sm border border-gray-300 rounded-lg bg-white placeholder:text-gray-400 focus:outline-none focus:border-black transition"
             />
             <input
               type="text"
@@ -172,31 +164,29 @@ export default function Dashboard() {
               onChange={(e) => setCustomSlug(e.target.value)}
               pattern="[a-zA-Z0-9]+"
               title="Letters and numbers only"
-              className="flex-1 min-w-0 px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 min-w-0 px-4 py-2.5 text-sm border border-gray-300 rounded-lg bg-white placeholder:text-gray-400 focus:outline-none focus:border-black transition"
             />
             <input
               type="datetime-local"
               value={expiresIn}
               onChange={(e) => setExpiresIn(e.target.value)}
-              className="flex-1 min-w-0 px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 min-w-0 px-4 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-black transition"
             />
             <button
               type="submit"
               disabled={creating}
-              className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition whitespace-nowrap"
+              className="px-5 py-2.5 text-sm font-medium text-white bg-black rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition whitespace-nowrap"
             >
               {creating ? "Creating..." : "Shorten"}
             </button>
           </form>
         </section>
 
-        {/* Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          {/* URL List */}
-          <section className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-5 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <section className="border border-gray-200 rounded-2xl p-6">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
               Your Links
-              <span className="text-xs font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full">
+              <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                 {urls.length}
               </span>
             </h2>
@@ -218,13 +208,13 @@ export default function Dashboard() {
                     tabIndex={0}
                     className={`flex items-start gap-2 p-3 rounded-lg border transition cursor-pointer ${
                       selectedUrl?.id === url.id
-                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/10"
-                        : "border-gray-200 dark:border-gray-800 hover:border-blue-300 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                        ? "border-black bg-gray-50"
+                        : "border-gray-200 hover:border-gray-400"
                     }`}
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm font-semibold text-blue-600 dark:text-blue-400">
+                        <span className="font-mono text-sm font-semibold">
                           {url.shortUrl}
                         </span>
                         <button
@@ -232,10 +222,10 @@ export default function Dashboard() {
                             e.stopPropagation();
                             handleCopy(url.shortUrl);
                           }}
-                          className="text-gray-400 hover:text-blue-600 text-xs transition"
+                          className="text-gray-400 hover:text-black text-xs transition"
                           title="Copy link"
                         >
-                          {copied === url.shortUrl ? "\u2713" : "\u2398"}
+                          {copied === url.shortUrl ? "✓" : "⎘"}
                         </button>
                       </div>
                       <p className="text-xs text-gray-500 truncate mt-0.5">{url.longUrl}</p>
@@ -249,25 +239,22 @@ export default function Dashboard() {
             )}
           </section>
 
-          {/* Stats Panel */}
-          <section className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-5 shadow-sm lg:sticky lg:top-6">
+          <section className="border border-gray-200 rounded-2xl p-6 lg:sticky lg:top-6">
             {selectedUrl ? (
               loadingStats ? (
                 <p className="text-sm text-gray-400 py-8 text-center">Loading analytics...</p>
               ) : (
                 <>
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                    Stats
-                  </h2>
+                  <h2 className="text-lg font-semibold mb-3">Stats</h2>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono text-sm font-semibold text-blue-600 dark:text-blue-400">
+                    <span className="font-mono text-sm font-semibold">
                       {selectedUrl.shortUrl}
                     </span>
-                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                    <span className="text-sm font-semibold">
                       {summary?.totalClicks ?? 0} clicks
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 truncate pb-4 mb-4 border-b border-gray-200 dark:border-gray-800">
+                  <p className="text-xs text-gray-500 truncate pb-4 mb-4 border-b border-gray-200">
                     {selectedUrl.longUrl}
                   </p>
 
@@ -281,12 +268,12 @@ export default function Dashboard() {
                             className="flex-1 flex flex-col items-center justify-end h-full"
                           >
                             <div
-                              className="w-full max-w-9 bg-blue-500 rounded-t-md relative opacity-80 hover:opacity-100 transition min-h-1"
+                              className="w-full max-w-9 bg-black rounded-t-md relative min-h-1"
                               style={{
                                 height: `${(d.count / maxClicks) * 100}%`,
                               }}
                             >
-                              <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-gray-700 dark:text-gray-300">
+                              <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-gray-700">
                                 {d.count}
                               </span>
                             </div>
@@ -309,12 +296,10 @@ export default function Dashboard() {
                         {summary.topReferrers.map((r) => (
                           <li
                             key={r.referrer}
-                            className="flex justify-between items-center text-sm px-2.5 py-1.5 rounded-md bg-gray-50 dark:bg-gray-800"
+                            className="flex justify-between items-center text-sm px-3 py-1.5 rounded-md bg-gray-50"
                           >
-                            <span className="text-gray-700 dark:text-gray-300">
-                              {r.referrer || "direct"}
-                            </span>
-                            <span className="font-mono text-xs font-semibold text-gray-900 dark:text-white">
+                            <span className="text-gray-700">{r.referrer || "direct"}</span>
+                            <span className="font-mono text-xs font-semibold">
                               {r.count}
                             </span>
                           </li>
@@ -323,25 +308,6 @@ export default function Dashboard() {
                     </>
                   )}
 
-                  {/* {summary?.topBrowsers && summary.topBrowsers.length > 0 && (
-                    <>
-                      <h3 className="text-sm font-medium text-gray-500 mb-2">Browsers</h3>
-                      <ul className="space-y-1">
-                        {summary.topBrowsers.map((b) => (
-                          <li
-                            key={b.browser}
-                            className="flex justify-between items-center text-sm px-2.5 py-1.5 rounded-md bg-gray-50 dark:bg-gray-800"
-                          >
-                            <span className="text-gray-700 dark:text-gray-300">{b.browser}</span>
-                            <span className="font-mono text-xs font-semibold text-gray-900 dark:text-white">
-                              {b.count}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  )} */}
-
                   {clicks.length > 0 && (
                     <>
                       <h3 className="text-sm font-medium text-gray-500 mt-4 mb-2">Recent Clicks</h3>
@@ -349,7 +315,7 @@ export default function Dashboard() {
                         {clicks.map((c) => (
                           <div
                             key={c.id}
-                            className="text-xs px-2.5 py-1.5 rounded-md bg-gray-50 dark:bg-gray-800 flex justify-between gap-2"
+                            className="text-xs px-3 py-1.5 rounded-md bg-gray-50 flex justify-between gap-2"
                           >
                             <span className="text-gray-500 truncate">{c.referrer || "direct"}</span>
                             <span className="text-gray-400 whitespace-nowrap">
